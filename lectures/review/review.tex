@@ -661,8 +661,8 @@ conventional wisdom is that we want to balance these in order to make accurate
 predictions.
 
 Interestingly, the bias-variance decomposition has been called into question in
-recent years, with regards to the study of overparameterized estimators in
-machine learning. But I don't really think that the fundamental idea of
+recent years, with regards to the study of overparametrized estimators in
+machine learning. But I don't really think that the fundamental idea of 
 ``balancing bias and variance being a good thing'' is actually contradicted 
 here. It's more that bias and variance can manifest themselves in strange ways
 in these settings. We'll cover this later in the course. 
@@ -684,7 +684,7 @@ variables. \emph{Least squares regression} of $Y$ on $X$ is given by
 \]
 where 
 \[
-\hbeta = \argmin_\beta \big\{ \|Y - X\beta\|_2^2 \big\} = (X^\T X)^{-1} X^\T Y.  
+\hbeta = \argmin_\beta \; \|Y - X\beta\|_2^2 = (X^\T X)^{-1} X^\T Y.  
 \]
 Critically, here we are assuming that $\rank(X) = d$, which necessarily requires
 that $d \leq n$, which makes the least squares criterion admit a unique

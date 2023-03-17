@@ -1,0 +1,249 @@
+\documentclass{article}
+
+\def\ParSkip{} 
+\input{../../common/ryantibs}
+
+\title{Homework 3 \\ \smallskip
+\large Advanced Topics in Statistical Learning, Spring 2023 \\ \smallskip
+Due Friday March 24 at 5pm}
+\date{}
+
+\begin{document}
+\maketitle
+\RaggedRight
+\vspace{-50pt}
+
+\section{Carath\'{e}odory's view on sparsity of lasso solutions [10 points]} 
+
+In this exercise, we will prove the fact we cited in lecture about sparsity of
+lasso solutions, by invoking Caratheodory's theorem. Let $Y \in \R^n$ be a
+response vector, $X \in \R^{n \times d}$ be a predictor matrix, and consider
+the lasso estimator defined by solving
+\[
+\minimize_\beta \; \frac{1}{2} \|Y - X\beta\|_2^2 + \lambda \|\beta\|_1,
+\]
+for a tuning parameter $\lambda > 0$.
+
+\begin{enumerate}[label=(\alph*)]
+\item Let \smash{$\hbeta$} be any solution to the lasso problem. Let
+  \smash{$\hat\alpha = \hbeta / \|\hbeta\|_1$}. Prove that \smash{$X
+    \hat\alpha$} lies in the convex hull of the vectors 
+  \marginpar{\small [2 pts]}
+  \[
+  \{ \pm X_j \}_{j=1}^d.
+  \]
+  Note: here $X_j \in \R^n$ denotes the $j\th$ column of $X$.
+
+\item Recall that Carath\'{e}odory's theorem states the following: given any set 
+  $C \subseteq \R^k$, every element in its convex hull $\conv(C)$ can be 
+  represented as a convex combination of $k+1$ elements of $C$. 
+
+  Use this theorem and part (a) to prove that there exists a lasso solution
+  \smash{$\tilde\beta$} with at most $n+1$ nonzero coefficients.  
+  \marginpar{\small [2 pts]}
+
+  Hint: start with a generic solution \smash{$\hbeta$}, and use
+  Carath\'{e}odory's theorem to construct a coefficient vector
+  \smash{$\tilde\beta$} such that (i) the fit is the same, \smash{$X\tilde\beta
+    = X\hbeta$}; (ii) the penalty is at worst the same,
+  \smash{$\|\tilde\beta\|_1 \leq \|\hbeta\|_1$}; and (iii)
+  \smash{$X\tilde\beta$} is a nonnegative linear combination of at most $n+1$ of
+  $\pm X_j$, $j=1,\dots,d$.  
+ 
+\item Now, assuming $\lambda>0$, use the subgradient optimality condition for 
+  the lasso problem to prove that the solution \smash{$\tilde\beta$} from part
+  (b) is supported on a subset of 
+  \marginpar{\small [3 pts]}
+  \[
+  \{ \pm X_j \}_{j=1}^d
+  \]
+  that has affine dimension at most $n-1$.
+
+  Hint: this is similar to the proof of Proposition 1 in the lasso lecture
+  notes. Assume that \smash{$\tilde\beta$} is a nonnegative combination of
+  exactly $n+1$ of $\pm X_j$, $j=1,\dots,d$. Then one of these $n+1$ vectors, 
+  denote it by $s_i X_i$ (where \smash{$s_i = \sign(\tilde\beta_i)$}) can be
+  written as a linear combination of the others. Take an inner product with the
+  lasso residual and use the subgradient optimality condition for the lasso to
+  prove that the coefficients in this linear combination must sum to 1, and
+  therefore, $s_i X_i$ is actually an affine combination of the others. Notice
+  that this shows the affine span of the $n+1$ vectors in question is
+  $(n-1)$-dimensional.     
+
+\item A refinement of Carath\'{e}odory's is as follows: given a set $C \subseteq
+  \R^k$, every element in its convex hull $\conv(C)$ can be represented as a
+  convex combination of $r+1$ elements of $C$, where $r$ is the affine dimension
+  of $\conv(C)$. 
+
+ Use this theorem and part (c) to prove that there exists a lasso solution
+  \smash{$\check\beta$} with at most $n$ nonzero coefficients.  
+  \marginpar{\small [2 pts]}
+\end{enumerate}
+
+\section{Variance of least squares in nonlinear feature models [15 points]} 
+
+\def\asto{\overset{\mathrm{as}}{\to}}
+\def\hSigma{\hat\Sigma}
+
+In this exercise, we will examine the variance of least squares (in the
+underparametrized regime) and min-norm least squares (in the overparametrized 
+regime) in nonlinear feature models. Recall for a response vector $Y \in \R^n$
+and feature matrix $X \in \R^{n \times d}$, the min-norm least squares estimator 
+\smash{$\hbeta = (X^\T X/n)^+ X^\T Y/n$} has a variance component of its
+out-of-sample prediction risk (conditional on $X$) given by:
+\begin{equation}
+\label{eq:ls_min_var}
+\Var_X(\hbeta) = \frac{\sigma^2}{n} \tr (\hSigma^+ \Sigma),
+\end{equation}
+where \smash{$\hSigma = X^\T X/n$}, and $\sigma^2 = \Var(y_i | x_i)$. This
+reduces to \smash{$\Var_X(\hbeta) = \frac{\sigma^2}{n} \tr (\hSigma^{-1}
+  \Sigma)$} when \smash{$\hSigma$} is invertible. In lecture, we studied a
+linear feature model of the form  
+\begin{equation}
+\label{eq:linear_features}
+X = Z \Sigma^{1/2},
+\end{equation}
+for a covariance matrix $\Sigma \in \R^{d \times d}$ and a random matrix $Z \in
+\R^{n \times d}$ that has i.i.d.\ entries with mean zero and unit variance. When
+$\Sigma = I$, which we will assume throughout this homework problem, recall that
+we proved that the variance \eqref{eq:ls_min_var} satisfies, under standard
+random matrix theory conditions, as $n,d \to \infty$ and $d/n \to \gamma \in 
+(0,\infty)$, 
+\begin{equation}
+\label{eq:ls_min_var_iso_limit}
+\Var_X(\hbeta) \asto 
+\begin{cases}
+\sigma^2 \frac{\gamma}{1-\gamma} & \text{for $\gamma < 1$} \\ 
+\sigma^2 \frac{1}{\gamma-1} & \text{for $\gamma < 1$}.
+\end{cases}
+\end{equation}
+(The result for $\gamma < 1$ actually holds regardless of $\Sigma$.) Instead, we
+can consider a nonlinear feature model of the form 
+\begin{equation}
+\label{eq:nonlinear_features}
+X = \varphi(Z \Sigma^{1/2} W^\T),
+\end{equation}
+where $\Sigma \in \R^{k \times k}$ and $Z \in \R^{n \times k}$ are as before
+(except with $k$ in place of $d$), and now $W \in \R^{d \times k}$ is a matrix
+of i.i.d.\ $N(0,1/k)$ entries, and $\varphi : \R \to \R$ is a nonlinear
+function---called the activation function in a neural network context---that we
+interpret to act elementwise on its input.
+
+There turns to be an uncanny connection between the asymptotic variance in
+linear and nonlinear feature models, which will you uncover via simulation in
+this homework problem. Attach your code as an appendix to this homework. 
+
+\begin{enumerate}[label=(\alph*)]
+\item Fix $n=200$, and let $d=[\gamma n]$ over a wide range of values for
+  $\gamma$ (make sure your range covers both $\gamma<1$ and $\gamma>1$). For
+  each $n,d$, draw $X$ from the linear feature model \eqref{eq:linear_features}
+  with $\Sigma=I$ and your choice of distribution for the entries of
+  $Z$. Compute the finite-sample variance \eqref{eq:ls_min_var}, and plot it, as
+  a function of $\gamma$, on top of the asymptotic variance curve  
+  \eqref{eq:ls_min_var_iso_limit}. To get a general idea of what this should
+  look like, refer back to Figure 2 in the overparametrization lecture notes.     
+  \marginpar{\small [3 pts]}
+
+\item For the same values of $n,d$, and $k=100$, draw $X$ from the nonlinear
+  feature model \eqref{eq:nonlinear_features}, for three different choices of
+  $\varphi$:   
+  \begin{enumerate}[label=\roman*.]
+  \item $\varphi(x) = a_1\tanh(x)$;
+  \item $\varphi(x) = a_2(x_+-b_2)$;
+  \item $\varphi(x) = a_3(|x|-b_3)$.
+  \end{enumerate}
+  Here $a_1,a_2,b_2,a_3,b_3$ are constants that you must choose to meet the 
+  standardization conditions $\E[\varphi(G)]=0$ and $\E[\varphi(G)^2]=1$, for 
+  $G \sim N(0,1)$. Produce a plot just as in part (a), with the finite-sample
+  variances for choice of each activation function plotted in a different color,
+  on top of the asymptotic variance curve \eqref{eq:ls_min_var_iso_limit} for
+  the linear model case. Comment on what you find: do the nonlinear
+  finite-sample variances lie close to the asymptotic variance for the linear
+  model case?  
+  \marginpar{\small [9 pts]}
+
+\item Now use a linear activation function $\phi(x) = ax-b$, and create a plot
+  as in part (b) with the same settings (same values of $n,d,k$, and so
+  on). What behavior do the finite-sample variances have as a function of 
+  $\gamma$? Is this surprising to you? Explain why what you are seeing is
+  happening. 
+ \marginpar{\small [3 pts]}
+
+\item As a bonus, in light of part (c), elaborate on why the results in part (b)
+  are remarkable. 
+
+\item As another (large) bonus, rerun the analysis in this entire problem but
+  with a non-isotropic covariance $\Sigma$ in \eqref{eq:linear_features},
+  \eqref{eq:nonlinear_features}. Extra bonus points if you properly recompute
+  the asymptotic variance curves. 
+\end{enumerate}
+
+\section{Implicit regularization buffet: choose your dish [15 points]} 
+
+In this exercise, you get to choose between multiple options for studying
+implicit regularization. To be clear, each part (a), (b), and (c) below are
+worth equal points, and you only have to choose one (bonus points for doing more
+than one). 
+
+\begin{enumerate}[label=(\alph*)]
+\item Given any response vector $Y \in \R^n$ and feature matrix $X \in \R^{n
+    \times d}$, let \smash{$\hbeta^{\mathrm{rg}}(\lambda)$} denote the ridge
+  estimator, which solves  
+  \[
+  \minimize_\beta \; \frac{1}{2} \|Y - X\beta\|_2^2 + \lambda \|\beta\|_2^2,
+  \]
+  for a tuning parameter $\lambda \geq 0$, and \smash{$\hbeta^{\mathrm{gf}}_t$}
+  denote the gradient flow estimator, which solves 
+  \[
+  \dot\beta(t) = X^\T (Y - X\beta(t)),
+  \]
+  over time $t \geq 0$, subject to the initial condition $\beta(0)=0$. Prove
+  that these two satisfy the relationship, for any $\lambda \geq 0$:
+  \[
+  \hbeta^{\mathrm{rg}}(\lambda) = \E[ \hbeta^{\mathrm{gf}}(T_\lambda) ], \quad 
+  \text{$T_\lambda \sim \mathrm{Exp}(1/\lambda)$},
+  \]
+  where $\mathrm{Exp}(\mu)$ denotes the exponential distribution with mean
+  $\mu$. In other words, if we stop gradient flow at a random time that
+  fluctuates around $1/\lambda$, then on average it will look like ridge with 
+  tuning parameter $\lambda$.
+
+  Hint: there are two ways to prove this. Either way starts by having you make
+  the observation that for a function $g$, its Laplace transform evaluated at a
+  $\lambda$, denoted $\cL\{g\}(\lambda)$, can be written in terms of an
+  expectation of $g$ with respect to the $\mathrm{Exp}(1/\lambda)$ distribution.
+  Then you have two paths you can pursue. The first path is to write down the 
+  explicit forms for the ridge and gradient flow solutions, and relate them
+  using Laplace transforms. The second path is to start with the differential
+  equation that defines gradient flow and take Laplace transforms, then relate
+  this to the optimality conditions for ridge. Either way you will have to read
+  up a little bit on Laplace transforms if you don't know much about them
+  already. 
+
+\item We saw in the ridge regression lecture that we can view the ridge
+  estimator in terms of the min-norm least squares estimator on an augmented
+  feature set, where we append a growing number of random features (independent
+  of the response and given features) with suitably shrinking variance. Conduct
+  a comprehensive simulation suite to (i) validate that this fact appears to be
+  true for a very large number of auxiliary features, and (ii) investigate the
+  speed of convergence: what happens as you vary the number of auxiliary
+  features, down to a moderate or even small number? 
+
+  Then, extend your simulations study to examine what happens when you use an
+  augmented feature set (by appending random features) in other interpolating
+  estimators, like the minimum $\ell_1$ norm least squares estimator, or a
+  neural network. Describe what you find. Does anything interesting come out?     
+
+\item Conduct a literature search to identify an interesting example of implicit
+  regularization in statistics or machine learning that is new---new just
+  meaning that we did not cover it in class. This could be an example that is
+  studied theoretically, or one that arises from methods or algorithms that are
+  popular in practice. Describe in reasonable detail (1-2 pages) what is known
+  about this example of implicit regularization.    
+
+\end{enumerate}
+
+\bibliographystyle{plainnat}
+\bibliography{../../common/ryantibs}
+
+\end{document}

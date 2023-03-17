@@ -77,6 +77,10 @@ In this exercise, we will work out some facts about RKHS regression.
   \minimize_\beta \; \|Y - K\beta\|_2^2 + \lambda \beta^\T K \beta. 
   \]
   for the matrix $K \in \R^{n \times n}$ with entries $K_{ij} = k(x_i, x_j)$. 
+  
+  For the uniqueness part, you may assume may assume that $k$ is a positive
+  definite kernel (strictly), so that $K$ is positive definite matrix
+  (strictly). 
 
   Hint: let $g = f+h$ and use the results in part (c) to argue that $g$ has a
   larger criterion value, unless $h=0$. Use part (b) to complete the reduction
@@ -142,7 +146,7 @@ proxy $\sigma^2$. (We assume nothing about their dependence structure.)
   \E \Big[ \max_{i=1,\dots,n} \, X_i \Big] \leq \sigma \sqrt{2 \log n}. 
   \]
 
-\item Prove that for any $\lambda \in \R$,
+\item Prove that for any $\lambda \geq 0$,
   \marginpar{\small [2 pts]}
   \[
   \P \Big(\max_{i=1,\dots,n} \, X_i \geq \lambda \Big) \leq ne^{-\lambda^2 /
@@ -150,7 +154,7 @@ proxy $\sigma^2$. (We assume nothing about their dependence structure.)
   \]
 
   Hint: use the fact that \smash{$\P(X_i \geq \lambda) \leq e^{-\lambda^2 / 
-    (2\sigma^2)}$}, for any $\lambda \in \R$, which you can view as a
+    (2\sigma^2)}$}, for any $\lambda \geq 0$, which you can view as a
   consequence of the tail bound for sub-Gaussian averages when $n=1$. 
 
 \item Reparametrize the result in part (c) to show that for any $t>0$,
@@ -224,8 +228,8 @@ where $Y = (y_1,\dots,y_n) \in \R^n$ is the response vector, $X \in \R^{n \times
   \smash{$V = \hSigma-\Sigma$}. Prove that    
   \marginpar{\small [2 pts]}
   \[
-  \E\Big[ \max_{j,k=1,\dots,d} \, |V_{jk}| \Big] \leq 2M^2 \sqrt{\frac{2
-      \log(2d^2)}{n}}.  
+  \E\Big[ \max_{j,k=1,\dots,d} \, |V_{jk}| \Big] \leq M^2 \sqrt{\frac{2
+      \log(2d^2)}{n}}.   
   \]
 
   Hint: apply part (b) to the entries of $V$.
@@ -234,8 +238,8 @@ where $Y = (y_1,\dots,y_n) \in \R^n$ is the response vector, $X \in \R^{n \times
   risk satisfying 
   \marginpar{\small [5 pts]}
   \[
-  \E[(x_0^\T \hbeta - x_0^\T \beta_0)^2] \leq 4M \sigma \|\beta_0\|_1
-  \sqrt{\frac{2 \log(2d)}{n}} + 8 M^2 \|\beta_0\|_1^2 \sqrt{\frac{2
+  \E[(x_0^\T \hbeta - x_0^\T \beta_0)^2] \leq 8M \sigma \|\beta_0\|_1
+  \sqrt{\frac{2 \log(2d)}{n}} + 4M^2 \|\beta_0\|_1^2 \sqrt{\frac{2
       \log(2d^2)}{n}},  
   \]
   where the expectation is taken over the training data $(x_i,y_i)$,
@@ -254,7 +258,7 @@ where $Y = (y_1,\dots,y_n) \in \R^n$ is the response vector, $X \in \R^{n \times
   \[
   (\hbeta-\beta_0)^\T \Sigma (\hbeta-\beta_0) -
   (\hbeta-\beta_0)^\T \hSigma (\hbeta-\beta_0) 
-  \leq \sum_{j,k=1}^d (\hbeta-\beta_0)_j (\hbeta-\beta_0)_k |V_{jk}|,
+  \leq \sum_{j,k=1}^d |(\hbeta-\beta_0)_j| |(\hbeta-\beta_0)_k| |V_{jk}|,
   \]
   where recall \smash{$V_{jk} = (\hSigma-\Sigma)_{jk}$}. Then do a little bit
   more algebra to bound the right-hand side above and apply the previous parts
@@ -283,8 +287,8 @@ Y = X\beta_0 + \epsilon.
 \end{gathered}
 \end{equation}
 Here, $F$ and $G$ are distributions on $\R$ that have mean zero and variance
-$\sigma^2 > 0$ and $r^2 \geq 0$, respectively. Abbreviate $\gamma = (F,G)$, and 
-let $\Gamma$ denote the set of all such pairs of distributions $(F,G)$ that
+$\sigma^2 > 0$ and $r^2 / d \geq 0$, respectively. Abbreviate $\gamma = (F,G)$,
+and let $\Gamma$ denote the set of all such pairs of distributions $(F,G)$ that 
 satisfy these moment conditions. 
 
 We can think of $F$ and $G$ as describing a noise and prior distribution,
